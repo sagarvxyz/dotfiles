@@ -7,7 +7,7 @@ export NVM_DIR="$HOME/.nvm"
 alias vim="nvim"
 
 # Netflix config
-if [[ WORKSPACE=="netflix" ]]; then
+if [[ $IS_NETFLIX ]]; then
 	alias node="newt exec node"
 	alias npm="newt exec npm"
 	alias yarn="newt exec yarn"

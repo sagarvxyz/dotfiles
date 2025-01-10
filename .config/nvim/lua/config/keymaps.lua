@@ -1,7 +1,7 @@
 -- [[ basic keymaps, check plugins for plugin-specific keymaps ]]
 
 -- misc utilities
-vim.keymap.set("n", "<leader>pd", vim.cmd.Ex, { desc = 'exit to nvim directory (aka "home")' })
+vim.keymap.set("n", "<leader>ls", vim.cmd.Ex, { desc = "[l]i[s]t directory" })
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "clear the previous search highlight" })
 -- vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
