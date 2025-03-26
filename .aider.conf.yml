@@ -2,6 +2,10 @@
 openai-api-key: dummy
 openai-api-base: http://copilotdppython-secure.us-east-1.prod.svip.mesh.netflix.net:7002/proxy/clinesvelagala/v1
 
+#set-env:
+#  - AWS_ACCESS_KEY_ID=dummy
+#  - AWS_SECRET_ACCESS_KEY=dummy
+
 # Model
 alias:
   - "chat:openai/gpt-4o"
@@ -11,7 +15,7 @@ alias:
 model: chat
 weak-model: editor-weak
 editor-model: editor
-thinking_tokens: 1024
+# thinking_tokens: 1024
 
 # Cache
 cache-prompts: true
