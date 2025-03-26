@@ -11,7 +11,7 @@ if [[ $IS_NETFLIX ]]; then
 	alias node="newt exec node"
 	alias npm="newt exec npm"
 	alias yarn="newt exec yarn"
-
+	export PATH=/opt/nflx:/opt/nflx/bin:$PATH
 	# THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 	export SDKMAN_DIR="$HOME/.sdkman"
 	[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"

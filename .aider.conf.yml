@@ -1,0 +1,23 @@
+# API
+openai-api-key: dummy
+openai-api-base: http://copilotdppython-secure.us-east-1.prod.svip.mesh.netflix.net:7002/proxy/clinesvelagala/v1
+
+# Model
+alias:
+  - "chat:openai/gpt-4o"
+  - "editor:openai/bedrock/anthropic.claude-3-7-sonnet-20250219-v1:0"
+  - "editor-weak:openai/bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0"
+
+model: chat
+weak-model: editor-weak
+editor-model: editor
+thinking_tokens: 1024
+
+# Cache
+cache-prompts: true
+
+# Notifications
+notifications: true
+
+# Git
+attribute-commit-message-author: true
