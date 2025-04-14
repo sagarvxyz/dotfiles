@@ -1,2 +1,3 @@
 #!/bin/sh
-exec newt --app-type workspaces install-dotfiles
+newt --app-type workspaces install-dotfiles
+exec $ZSH/script/bootstrap
