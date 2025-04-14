@@ -1,0 +1,87 @@
+#!/bin/zsh
+
+# Script to initialize the Netflix Model Gateway (to run AI models/agents locally like Cline/Roo/Aider)
+
+# Function to ensure Docker is started
+start_docker() {
+  echo "Checking Docker status..."
+  if ! pgrep -x "docker" > /dev/null; then
+    echo "Docker is not running. Starting Docker..."
+    open --background -a Docker
+    # Wait until Docker is fully started
+    while ! docker info > /dev/null 2>&1; do
+      sleep 1
+    done
+    echo "Docker started successfully."
+  else
+    echo "Docker is already running."
+  fi
+}
+
+# Function to create a temp configuration file
+create_config_file() {
+
+  echo "Creating configuration file..."
+  cat << EOF > /tmp/proxy-config.yaml
+# yaml-language-server: \$schema=http://snweb.test.netflix.net/files/MeshRoot.json
+apiVersion: "v1"
+spec:
+  meshServers:
+    - name: model-gateway
+      config:
+        localTargets:
+          - name: lo_egress
+            httpWorkload:
+              port: 2002
+              requestTimeoutMs: 0
+        listeners:
+        - name: strip_auth
+          port: 7002
+          handlers:
+            - http:
+                security:
+                  plaintext: {}
+                headers:
+                  requestHeadersToRemove:
+                    - "Authorization"
+                defaultRoute:
+                  localTargetName: lo_egress
+EOF
+
+  echo "Configuration file created at /tmp/proxy-config.yaml."
+
+}
+
+# Function to start the proxy
+start_proxy() {
+  echo "Starting the proxy..."
+  newt --app-type mesh start -e prod -s /tmp/proxy-config.yaml
+}
+
+model_gateway() {
+  local project_id="clinesvelagala"  # Default project ID
+  
+  if [[ "$2" != "" ]]; then
+    project_id="$2"  # Use provided project ID if available
+  fi
+  
+  if [[ "$1" == "start" ]]; then
+    # Main script execution
+    echo "Starting script for project ID: $project_id"
+    start_docker
+    create_config_file "$project_id"
+    start_proxy
+    echo "Script execution completed."
+
+  elif [[ "$1" == "stop" ]]; then
+    # Stop the proxy
+    echo "Stopping the proxy..."
+    newt --app-type mesh stop
+    echo "Proxy stopped."
+
+  else
+    echo "Usage: modelgateway start|stop [project_id]"
+  fi
+}
+# Call the function with all arguments passed to the script
+model_gateway "$@"
