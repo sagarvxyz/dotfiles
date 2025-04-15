@@ -1,0 +1,1 @@
+alias my_workbench = "ssh svelagala-wb1.workbench.prod.netflix.net"

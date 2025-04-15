@@ -1,5 +1,5 @@
-export ZSH=$HOME/.dotfiles
-export PROJECTS=~/Code
+export ZSH=$HOME/dotfiles
+export PROJECTS=~/code
 
 if [[ -a ~/.zshenv ]]; then
 	source ~/.zshenv
