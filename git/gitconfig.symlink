@@ -49,3 +49,6 @@
 	defaultBranch = main
 [pull]
 	rebase = true
+[user]
+	name = Sagar Velagala
+	email = svelagala@netflix.com
