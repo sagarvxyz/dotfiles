@@ -16,7 +16,7 @@
         ui = true
 [core]
         excludesfile = ~/.gitignore
-        editor = nvim
+        editor = vim
 [apply]
         whitespace = nowarn
 [mergetool]
