@@ -58,7 +58,7 @@ start_proxy() {
   newt --app-type mesh start -e prod -s /tmp/proxy-config.yaml
 }
 
-model_gateway() {
+modelgateway() {
   local project_id="clinesvelagala"  # Default project ID
   
   if [[ "$2" != "" ]]; then
@@ -84,4 +84,4 @@ model_gateway() {
   fi
 }
 # Call the function with all arguments passed to the script
-model_gateway "$@"
+modelgateway "$@"

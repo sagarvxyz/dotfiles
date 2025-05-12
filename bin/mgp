@@ -1,0 +1,20 @@
+mgp() {
+    local project_id="clinesvelagala"  # Default project ID
+    if [[ "$1" == "init" ]]; then
+        # Create the directory first
+        mkdir -p ~/.sbn-dev-agent/bin
+
+        # Download the sbn-dev-agent
+        curl -o ~/.sbn-dev-agent/bin/sbn-dev-agent https://artifacts.netflix.net/devtools/sbn-dev-agent/sbn-dev-agent-darwin-arm64
+
+        # Make the agent executable
+        chmod +x ~/.sbn-dev-agent/bin/sbn-dev-agent
+
+        # Run the agent
+        sh -c ~/.sbn-dev-agent/bin/sbn-dev-agent
+
+    else
+        echo "Usage: mgp init"
+}
+
+mgp @1
