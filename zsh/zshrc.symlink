@@ -36,5 +36,5 @@ done
 
 unset config_files
 
-# THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-source $ZSH/sdkman/path.zsh
+# implements the mise tool manager: https://mise.jdx.dev/
+eval "$(mise activate zsh)"
