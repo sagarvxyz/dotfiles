@@ -1,2 +1,16 @@
-git/gitconfig.local.symlink
-Brewfile.lock.json
+*
+
+# Allow dotfiles
+!.bashrc
+!.bash_profile
+!.gitconfig
+!.gitignore
+!.gitignore_global
+!.npmrc
+!.zprofile
+!.zshrc
+
+# Allow config directories
+!.config/
+.config/*
+!.config/nvim/
