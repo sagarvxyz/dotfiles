@@ -12,5 +12,10 @@
 
 # Allow config directories
 !.config/
-.config/*
 !.config/nvim/
+!.config/nvim/**
+!.config/ghostty/
+!.config/ghostty/**
+
+.DS_Store
+.log
