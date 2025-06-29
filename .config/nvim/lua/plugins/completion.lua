@@ -27,7 +27,8 @@ return {
 					end,
 				},
 				completion = {
-					completeopt = "menu,menuone,noselect",
+					completeopt = "menu,menuone,popup,noselect",
+					autocomplete = false,
 				},
 				experimental = {
 					ghost_text = true,
@@ -60,11 +61,11 @@ return {
 					["<C-e>"] = cmp.mapping.abort(),
 				}),
 				sources = cmp.config.sources({
-					{ name = "nvim_lsp", keyword_length = 1 },
-					{ name = "luasnip", keyword_length = 1 },
-					{ name = "copilot", keyword_length = 99 },
-					{ name = "path", keyword_length = 99 },
-					{ name = "buffer", keyword_length = 99 },
+					{ name = "nvim_lsp", keyword_length = 3 },
+					{ name = "luasnip", keyword_length = 3 },
+					{ name = "copilot", keyword_length = 5 },
+					{ name = "path", keyword_length = 3 },
+					{ name = "buffer", keyword_length = 3 },
 				}),
 				formatting = {
 					format = lspkind.cmp_format({
@@ -88,3 +89,4 @@ return {
 		end,
 	},
 }
+

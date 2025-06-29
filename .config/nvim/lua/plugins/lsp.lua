@@ -13,13 +13,13 @@ return {
 				ensure_installed = {
 					-- Formatters
 					"stylua",
-					"ruff", 
+					"ruff",
 					"prettierd",
 					"prettier",
 					"google-java-format",
 					-- LSP servers (keeping existing ones)
 					"ts_ls",
-					"pyright", 
+					"pyright",
 					"jsonls",
 					"yamlls",
 					"gopls",
@@ -95,34 +95,107 @@ return {
 			-- LSP keybindings function
 			local on_attach = function(client, bufnr)
 				local opts = { buffer = bufnr, silent = true }
-				
+
 				-- Core 'g' prefixed actions
-				vim.keymap.set("n", "grn", vim.lsp.buf.rename, vim.tbl_extend("force", opts, { desc = "LSP: [R]e[n]ame" }))
-				vim.keymap.set("n", "gra", vim.lsp.buf.code_action, vim.tbl_extend("force", opts, { desc = "LSP: Code [A]ction" }))
-				vim.keymap.set("n", "grr", "<cmd>Telescope lsp_references<cr>", vim.tbl_extend("force", opts, { desc = "LSP: [R]eferences" }))
-				vim.keymap.set("n", "gri", "<cmd>Telescope lsp_implementations<cr>", vim.tbl_extend("force", opts, { desc = "LSP: [I]mplementation" }))
-				vim.keymap.set("n", "grd", "<cmd>Telescope lsp_definitions<cr>", vim.tbl_extend("force", opts, { desc = "LSP: [D]efinition" }))
-				vim.keymap.set("n", "grD", vim.lsp.buf.declaration, vim.tbl_extend("force", opts, { desc = "LSP: [D]eclaration" }))
-				vim.keymap.set("n", "grt", "<cmd>Telescope lsp_type_definitions<cr>", vim.tbl_extend("force", opts, { desc = "LSP: [T]ype Definition" }))
+				vim.keymap.set(
+					"n",
+					"grn",
+					vim.lsp.buf.rename,
+					vim.tbl_extend("force", opts, { desc = "LSP: [R]e[n]ame" })
+				)
+				vim.keymap.set(
+					"n",
+					"gra",
+					vim.lsp.buf.code_action,
+					vim.tbl_extend("force", opts, { desc = "LSP: Code [A]ction" })
+				)
+				vim.keymap.set(
+					"n",
+					"grr",
+					"<cmd>Telescope lsp_references<cr>",
+					vim.tbl_extend("force", opts, { desc = "LSP: [R]eferences" })
+				)
+				vim.keymap.set(
+					"n",
+					"gri",
+					"<cmd>Telescope lsp_implementations<cr>",
+					vim.tbl_extend("force", opts, { desc = "LSP: [I]mplementation" })
+				)
+				vim.keymap.set(
+					"n",
+					"grd",
+					"<cmd>Telescope lsp_definitions<cr>",
+					vim.tbl_extend("force", opts, { desc = "LSP: [D]efinition" })
+				)
+				vim.keymap.set(
+					"n",
+					"grD",
+					vim.lsp.buf.declaration,
+					vim.tbl_extend("force", opts, { desc = "LSP: [D]eclaration" })
+				)
+				vim.keymap.set(
+					"n",
+					"grt",
+					"<cmd>Telescope lsp_type_definitions<cr>",
+					vim.tbl_extend("force", opts, { desc = "LSP: [T]ype Definition" })
+				)
 
 				-- Manual popups
-				vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("force", opts, { desc = "LSP: Hover Documentation" }))
-				vim.keymap.set("n", "gK", vim.lsp.buf.signature_help, vim.tbl_extend("force", opts, { desc = "LSP: Signature Documentation" }))
+				vim.keymap.set(
+					"n",
+					"K",
+					vim.lsp.buf.hover,
+					vim.tbl_extend("force", opts, { desc = "LSP: Hover Documentation" })
+				)
+				vim.keymap.set(
+					"n",
+					"gK",
+					vim.lsp.buf.signature_help,
+					vim.tbl_extend("force", opts, { desc = "LSP: Signature Documentation" })
+				)
 
 				-- Code actions
-				vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, vim.tbl_extend("force", opts, { desc = "[C]ode [A]ction" }))
+				vim.keymap.set(
+					"n",
+					"<leader>ca",
+					vim.lsp.buf.code_action,
+					vim.tbl_extend("force", opts, { desc = "[C]ode [A]ction" })
+				)
 				vim.keymap.set("n", "<leader>cf", function()
 					require("conform").format({ async = true, lsp_fallback = true })
 				end, vim.tbl_extend("force", opts, { desc = "[C]ode [F]ormat" }))
-				vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, vim.tbl_extend("force", opts, { desc = "[C]ode [R]ename" }))
-				vim.keymap.set("n", "<leader>cs", "<cmd>Telescope lsp_document_symbols<cr>", vim.tbl_extend("force", opts, { desc = "[C]ode [S]ymbols" }))
-				vim.keymap.set("n", "<leader>cS", "<cmd>Telescope lsp_workspace_symbols<cr>", vim.tbl_extend("force", opts, { desc = "[C]ode workspace [S]ymbols" }))
-				vim.keymap.set("n", "<leader>cI", "<cmd>LspInfo<cr>", vim.tbl_extend("force", opts, { desc = "[C]ode LSP [I]nfo" }))
-				
+				vim.keymap.set(
+					"n",
+					"<leader>cr",
+					vim.lsp.buf.rename,
+					vim.tbl_extend("force", opts, { desc = "[C]ode [R]ename" })
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>cs",
+					"<cmd>Telescope lsp_document_symbols<cr>",
+					vim.tbl_extend("force", opts, { desc = "[C]ode [S]ymbols" })
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>cS",
+					"<cmd>Telescope lsp_workspace_symbols<cr>",
+					vim.tbl_extend("force", opts, { desc = "[C]ode workspace [S]ymbols" })
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>cI",
+					"<cmd>LspInfo<cr>",
+					vim.tbl_extend("force", opts, { desc = "[C]ode LSP [I]nfo" })
+				)
+
 				-- Inlay hints toggle
 				if vim.lsp.inlay_hint then
 					vim.keymap.set("n", "<leader>th", function()
-						vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
+						vim.lsp.inlay_hint.enable(
+							not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }),
+							{ bufnr = bufnr }
+						)
 					end, vim.tbl_extend("force", opts, { desc = "[T]oggle inlay [H]ints" }))
 				end
 			end
@@ -183,14 +256,14 @@ return {
 					vim.api.nvim_set_hl(0, "DiagnosticUnderlineWarn", { undercurl = true, sp = "#e0af68" })
 					vim.api.nvim_set_hl(0, "DiagnosticUnderlineInfo", { undercurl = true, sp = "#7aa2f7" })
 					vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", { undercurl = true, sp = "#9ece6a" })
-					
+
 					-- LSP reference highlighting
 					vim.api.nvim_set_hl(0, "LspReferenceText", { bg = "#3d3d3d" })
 					vim.api.nvim_set_hl(0, "LspReferenceRead", { bg = "#3d3d3d" })
 					vim.api.nvim_set_hl(0, "LspReferenceWrite", { bg = "#3d3d3d" })
 				end,
 			})
-			
+
 			-- Trigger once for current colorscheme
 			vim.schedule(function()
 				vim.cmd("doautocmd ColorScheme")
