@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 # Colors for output
@@ -12,6 +11,7 @@ NC='\033[0m' # No Color
 # Get the directory where this script is located
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FILES_DIR="$DOTFILES_DIR/files"
+BACKUP_DIR="$HOME/.dotfiles_backup_$(date +%Y%m%d%H%M%S)" # Centralized, timestamped backup folder
 
 # Check if files directory exists
 if [[ ! -d "$FILES_DIR" ]]; then
@@ -21,71 +21,69 @@ fi
 
 echo -e "${BLUE}Installing dotfiles from $FILES_DIR${NC}"
 echo -e "${BLUE}Target directory: $HOME${NC}"
+echo -e "${BLUE}Backup directory: $BACKUP_DIR${NC}"
 echo
 
-# Function to create backup of existing file
-backup_file() {
-    local file_path=$1
-    if [[ -f "$file_path" || -L "$file_path" ]]; then
-        local backup_path="${file_path}.backup-$(date +%Y%m%d-%H%M%S)"
-        echo -e "${YELLOW}  Backing up existing file to: $backup_path${NC}"
-        mv "$file_path" "$backup_path"
-    fi
-}
+# Create the centralized backup directory
+mkdir -p "$BACKUP_DIR" || { echo -e "${RED}Error: Could not create backup directory $BACKUP_DIR${NC}"; exit 1; }
 
-# Function to create symlink for a file
+# Function to create a symlink and handle backups
 create_symlink() {
-    local source_file=$1
-    local target_file=$2
-    
-    # Create parent directory if it doesn't exist
-    local parent_dir=$(dirname "$target_file")
-    if [[ ! -d "$parent_dir" ]]; then
-        echo -e "${BLUE}  Creating directory: $parent_dir${NC}"
-        mkdir -p "$parent_dir"
+    local source_path="$1"
+    local dest_path="$2"
+    local backup_relative_path="$3" # Path relative to HOME for backup within BACKUP_DIR
+
+    echo -e "${BLUE}Processing: ${NC}$source_path ${BLUE}-> ${NC}$dest_path"
+
+    # Check if the destination exists (file, directory, or symlink)
+    if [[ -e "$dest_path" || -L "$dest_path" ]]; then
+        echo -e "${YELLOW}  Existing item found at $dest_path. Backing up...${NC}"
+        
+        # Ensure parent directories exist in the backup location
+        mkdir -p "$(dirname "$BACKUP_DIR/$backup_relative_path")" || { echo -e "${RED}Error: Could not create backup parent directory for $backup_relative_path${NC}"; exit 1; }
+
+        # Move the existing item to the backup directory
+        mv "$dest_path" "$BACKUP_DIR/$backup_relative_path" || { echo -e "${RED}Error: Could not move $dest_path to backup${NC}"; exit 1; }
+        echo -e "${GREEN}  Backed up to: ${NC}$BACKUP_DIR/$backup_relative_path"
     fi
-    
-    # Backup existing file if it exists
-    backup_file "$target_file"
-    
-    # Create symlink
-    echo -e "${GREEN}  Linking: $target_file -> $source_file${NC}"
-    ln -s "$source_file" "$target_file"
+
+    # Ensure parent directories exist for the symlink destination
+    mkdir -p "$(dirname "$dest_path")" || { echo -e "${RED}Error: Could not create destination parent directory for $dest_path${NC}"; exit 1; }
+
+    # Create the symbolic link
+    ln -sf "$source_path" "$dest_path" || { echo -e "${RED}Error: Could not create symlink from $source_path to $dest_path${NC}"; exit 1; }
+    echo -e "${GREEN}  Symlinked: ${NC}$source_path ${GREEN}-> ${NC}$dest_path"
 }
 
-# Find all files in the files directory and create symlinks
-total_files=0
-linked_files=0
+# --- Handle .config directory ---
+echo -e "\n${BLUE}--- Processing .config directory ---${NC}"
+CONFIG_SOURCE_DIR="$FILES_DIR/.config"
+CONFIG_DEST_DIR="$HOME/.config"
 
-echo -e "${BLUE}Discovering files to link...${NC}"
+if [[ -d "$CONFIG_SOURCE_DIR" ]]; then
+    mkdir -p "$CONFIG_DEST_DIR" # Ensure .config in HOME exists
+    find "$CONFIG_SOURCE_DIR" -mindepth 1 -maxdepth 1 | while read -r item; do
+        item_name="$(basename "$item")"
+        source_path="$item"
+        destination_path="$CONFIG_DEST_DIR/$item_name"
+        backup_relative_path=".config/$item_name" # Backup will be .dotfiles_backup/.config/item_name
+        create_symlink "$source_path" "$destination_path" "$backup_relative_path"
+    done
+else
+    echo -e "${YELLOW}No .config directory found in $FILES_DIR. Skipping.${NC}"
+fi
 
-# Use find to get all files (not directories) in the files directory
-while IFS= read -r -d '' source_file; do
-    # Get relative path from files directory
-    relative_path="${source_file#$FILES_DIR/}"
-    target_file="$HOME/$relative_path"
+# --- Handle other files and folders in the main 'files' directory ---
+echo -e "\n${BLUE}--- Processing other files and folders in $FILES_DIR ---${NC}"
+find "$FILES_DIR" -mindepth 1 -maxdepth 1 ! -name ".config" | while read -r item; do
+    item_name="$(basename "$item")"
     
-    total_files=$((total_files + 1))
-    
-    echo -e "${BLUE}Processing: $relative_path${NC}"
-    
-    # Check if source file exists and is a regular file
-    if [[ -f "$source_file" ]]; then
-        create_symlink "$source_file" "$target_file"
-        linked_files=$((linked_files + 1))
-    else
-        echo -e "${YELLOW}  Skipping: not a regular file${NC}"
-    fi
-    
-    echo
-done < <(find "$FILES_DIR" -type f -print0)
+    source_path="$item"
+    destination_path="$HOME/$item_name"
+    backup_relative_path="$item_name" # Backup will be .dotfiles_backup/item_name
+    create_symlink "$source_path" "$destination_path" "$backup_relative_path"
+done
 
-echo -e "${GREEN}Installation complete!${NC}"
-echo -e "${GREEN}Linked $linked_files out of $total_files files${NC}"
-echo
-echo -e "${BLUE}To verify your installation:${NC}"
-echo "  ls -la ~/ | grep ' -> '"
-echo "  ls -la ~/.config/ | grep ' -> '"
-echo
-echo -e "${BLUE}To uninstall, run:${NC}"
-echo "  ./uninstall.sh"
+echo -e "\n${GREEN}Dotfiles installation complete!${NC}"
+echo -e "${GREEN}All original files, if they existed, are backed up in: ${NC}$BACKUP_DIR"
+echo -e "${BLUE}You can manually review or delete this backup folder if everything works as expected.${NC}"

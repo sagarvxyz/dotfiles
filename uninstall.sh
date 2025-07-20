@@ -18,103 +18,116 @@ echo -e "${BLUE}Dotfiles directory: $DOTFILES_DIR${NC}"
 echo -e "${BLUE}Target directory: $HOME${NC}"
 echo
 
-# Function to restore backup if it exists
-restore_backup() {
-    local file_path=$1
-    local backup_pattern="${file_path}.backup-*"
-    
-    # Find the most recent backup
-    local latest_backup
-    latest_backup=$(ls -t $backup_pattern 2>/dev/null | head -n1 || true)
-    
-    if [[ -n "$latest_backup" && -f "$latest_backup" ]]; then
-        echo -e "${GREEN}  Restoring backup: $latest_backup -> $file_path${NC}"
-        mv "$latest_backup" "$file_path"
-        return 0
-    fi
-    return 1
-}
+# --- Define the backup directory pattern ---
+# We need to find the most recent backup directory created by the install script.
+# The install script creates a directory like ~/.dotfiles_backup_YYYYMMDDHHMMSS
+BACKUP_DIR_PATTERN="$HOME/.dotfiles_backup_*"
+LATEST_BACKUP_DIR=""
 
-# Function to remove symlink and restore backup
-remove_symlink() {
-    local target_file=$1
-    local source_file=$2
-    
-    if [[ -L "$target_file" ]]; then
-        # Check if it's a symlink pointing to our dotfiles
+# Find the most recent backup directory
+LATEST_BACKUP_DIR=$(ls -d -t $BACKUP_DIR_PATTERN 2>/dev/null | head -n1 || true)
+
+if [[ -z "$LATEST_BACKUP_DIR" ]]; then
+    echo -e "${YELLOW}Warning: No centralized dotfiles backup directory found (${BACKUP_DIR_PATTERN}).${NC}"
+    echo -e "${YELLOW}Automatic restoration of original files may not be possible.${NC}"
+fi
+
+# Function to remove symlink and restore original file from centralized backup
+remove_symlink_and_restore() {
+    local home_target_path="$1"       # Path in $HOME (e.g., $HOME/.bashrc, $HOME/.config/nvim)
+    local source_dotfile_path="$2"    # Path in $DOTFILES_DIR/files (e.g., $DOTFILES_DIR/files/.bashrc)
+    local backup_relative_path="$3"   # Path relative to $HOME for backup (e.g., .bashrc, .config/nvim)
+
+    echo -e "${BLUE}Processing: ${NC}$home_target_path"
+
+    if [[ -L "$home_target_path" ]]; then # Check if it's a symlink
         local link_target
-        link_target=$(readlink "$target_file")
-        if [[ "$link_target" == "$source_file" ]]; then
-            echo -e "${YELLOW}  Removing symlink: $target_file${NC}"
-            rm "$target_file"
-            
-            # Try to restore backup
-            if ! restore_backup "$target_file"; then
-                echo -e "${BLUE}    No backup found for $target_file${NC}"
+        link_target=$(readlink "$home_target_path")
+
+        # Verify if the symlink points to our dotfiles
+        if [[ "$link_target" == "$source_dotfile_path" ]]; then
+            echo -e "${YELLOW}  Removing symlink: ${NC}$home_target_path"
+            rm "$home_target_path"
+
+            # Attempt to restore the original file from the centralized backup
+            local original_backup_file="$LATEST_BACKUP_DIR/$backup_relative_path"
+            if [[ -f "$original_backup_file" || -d "$original_backup_file" ]]; then # Check if backup exists (file or dir)
+                echo -e "${GREEN}  Restoring original: ${NC}$original_backup_file ${GREEN}-> ${NC}$home_target_path"
+                # Ensure parent directories for restoration exist
+                mkdir -p "$(dirname "$home_target_path")"
+                mv "$original_backup_file" "$home_target_path"
+            else
+                echo -e "${BLUE}  No original backup found for ${NC}$home_target_path ${BLUE}in ${NC}$LATEST_BACKUP_DIR"
             fi
         else
-            echo -e "${YELLOW}  Skipping: $target_file points to different location ($link_target)${NC}"
+            echo -e "${YELLOW}  Skipping: ${NC}$home_target_path ${YELLOW}points to different location (${link_target})${NC}"
         fi
-    elif [[ -f "$target_file" ]]; then
-        echo -e "${YELLOW}  Skipping: $target_file is not a symlink${NC}"
+    elif [[ -e "$home_target_path" ]]; then # It exists but is not a symlink (or not our symlink)
+        echo -e "${YELLOW}  Skipping: ${NC}$home_target_path ${YELLOW}exists but is not a symlink created by this script.${NC}"
     else
-        echo -e "${BLUE}  File does not exist: $target_file${NC}"
+        echo -e "${BLUE}  File does not exist: ${NC}$home_target_path${NC}"
     fi
 }
 
-# Check if files directory exists
+# Check if files directory exists (required to know what symlinks *should* exist)
 if [[ ! -d "$FILES_DIR" ]]; then
-    echo -e "${RED}Error: files/ directory not found in $DOTFILES_DIR${NC}"
-    echo -e "${YELLOW}Note: You can still manually remove symlinks and restore backups${NC}"
+    echo -e "${RED}Error: 'files/' directory not found in $DOTFILES_DIR.${NC}"
+    echo -e "${YELLOW}Cannot determine which symlinks to remove without the source 'files/' structure.${NC}"
+    echo -e "${YELLOW}If you wish to proceed, you'll need to manually remove symlinks and restore backups.${NC}"
     exit 1
 fi
 
-total_files=0
-removed_files=0
+echo -e "\n${BLUE}--- Discovering and removing symlinks ---${NC}"
 
-echo -e "${BLUE}Discovering symlinks to remove...${NC}"
+# 1. Handle .config directory first
+CONFIG_SOURCE_DIR="$FILES_DIR/.config"
+if [[ -d "$CONFIG_SOURCE_DIR" ]]; then
+    echo -e "\n${BLUE}Processing .config symlinks...${NC}"
+    find "$CONFIG_SOURCE_DIR" -mindepth 1 -maxdepth 1 | while read -r source_item; do
+        item_name="$(basename "$source_item")"
+        home_target_path="$HOME/.config/$item_name"
+        backup_relative_path=".config/$item_name" # Path used in centralized backup
+        remove_symlink_and_restore "$home_target_path" "$source_item" "$backup_relative_path"
+    done
+else
+    echo -e "${YELLOW}No .config directory found in $FILES_DIR. Skipping .config symlinks.${NC}"
+fi
 
-# Use find to get all files in the files directory
-while IFS= read -r -d '' source_file; do
-    # Get relative path from files directory
-    relative_path="${source_file#$FILES_DIR/}"
-    target_file="$HOME/$relative_path"
-    
-    total_files=$((total_files + 1))
-    
-    echo -e "${BLUE}Processing: $relative_path${NC}"
-    
-    if [[ -f "$source_file" ]]; then
-        remove_symlink "$target_file" "$source_file"
-        if [[ ! -L "$target_file" ]]; then
-            removed_files=$((removed_files + 1))
-        fi
-    fi
-    
-    echo
-done < <(find "$FILES_DIR" -type f -print0)
+# 2. Handle other files and folders in the main 'files' directory
+echo -e "\n${BLUE}Processing other dotfile symlinks...${NC}"
+find "$FILES_DIR" -mindepth 1 -maxdepth 1 ! -name ".config" | while read -r source_item; do
+    item_name="$(basename "$source_item")"
+    home_target_path="$HOME/$item_name"
+    backup_relative_path="$item_name" # Path used in centralized backup
+    remove_symlink_and_restore "$home_target_path" "$source_item" "$backup_relative_path"
+done
 
-# Clean up empty directories (but be careful not to remove important ones)
-echo -e "${BLUE}Cleaning up empty directories...${NC}"
+# Clean up empty directories that might have been created by symlinks
+# This list should broadly cover common dotfile locations. Be cautious with adding too many!
+echo -e "\n${BLUE}--- Cleaning up empty directories ---${NC}"
 cleanup_dirs=(
+    "$HOME/.config"
     "$HOME/.config/nvim/lua/plugins"
     "$HOME/.config/nvim/lua/config"
     "$HOME/.config/nvim/lua"
+    "$HOME/.config/nvim"
     "$HOME/.config/ghostty"
+    # Add any other specific empty directories your dotfiles might create or expect to be empty
 )
 
 for dir in "${cleanup_dirs[@]}"; do
     if [[ -d "$dir" && -z "$(ls -A "$dir" 2>/dev/null)" ]]; then
-        echo -e "${YELLOW}  Removing empty directory: $dir${NC}"
-        rmdir "$dir" 2>/dev/null || true
+        echo -e "${YELLOW}  Removing empty directory: ${NC}$dir"
+        rmdir "$dir" 2>/dev/null || true # rmdir only removes empty directories
     fi
 done
 
-echo -e "${GREEN}Uninstallation complete!${NC}"
-echo -e "${GREEN}Processed $total_files files${NC}"
-echo
-echo -e "${BLUE}Remaining backup files (if any):${NC}"
-find "$HOME" -name "*.backup-*" -type f 2>/dev/null | head -10 || echo "  No backup files found"
-echo
-echo -e "${BLUE}To reinstall, run:${NC}"
+echo -e "\n${GREEN}Uninstallation complete!${NC}"
+if [[ -n "$LATEST_BACKUP_DIR" ]]; then
+    echo -e "${BLUE}Backed-up original files were restored from: ${NC}$LATEST_BACKUP_DIR"
+    echo -e "${YELLOW}Consider removing this backup directory if you're sure you don't need it: ${NC}rm -rf \"$LATEST_BACKUP_DIR\"${NC}"
+else
+    echo -e "${YELLOW}No backup directory was found, so no files were automatically restored.${NC}"
+fi
+echo -e "\n${BLUE}To reinstall, run:${NC}"
 echo "  ./install.sh"
