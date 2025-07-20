@@ -1,29 +1,40 @@
-# Taps
+tap "fsouza/prettierd"
 tap "homebrew/bundle"
-
-# Core CLI tools
-brew "git"              # Version control system
-brew "tmux"             # Terminal multiplexer
-brew "mise"             # Version manager for multiple languages
-brew "fd"               # Fast file search utility
-brew "ripgrep"          # Fast text search
-brew "reattach-to-user-namespace" # tmux integration
-
-# Neovim setup
-brew "neovim"           # Modern Vim editor
-brew "tree-sitter"      # Syntax highlighting parser
-brew "fsouza/prettierd/prettierd" # Fast prettier daemon for neovim
-
-# Development tools
-brew "gh"               # GitHub CLI
-brew "make"             # Build automation tool
-brew "docker"           # Container platform
-brew "gcc"              # GNU Compiler Collection
-
-# Apps
-cask "1password", args: { appdir: "/Applications" }
-cask "visual-studio-code", args: { appdir: "/Applications" }
-cask "ghostty", args: { appdir: "/Applications" }
-cask "steam", args: { appdir: "/Applications" }
+brew "docker"
+brew "fd"
+brew "gcc"
+brew "gh"
+brew "git"
+brew "go"
+brew "jq"
+brew "make"
+brew "mise"
+brew "tree-sitter"
+brew "neovim"
+brew "reattach-to-user-namespace"
+brew "ripgrep"
+brew "tmux"
+brew "tree"
+brew "uv"
+brew "fsouza/prettierd/prettierd"
+cask "1password"
 cask "font-fira-code-nerd-font"
+cask "ghostty", args: { appdir: "/Applications" }
+cask "git-credential-manager"
 cask "monodraw"
+cask "steam"
+cask "visual-studio-code"
+cask "zed"
+vscode "andenetalexander.vim-cheatsheet"
+vscode "asvetliakov.vscode-neovim"
+vscode "coder.coder-remote"
+vscode "dbaeumer.vscode-eslint"
+vscode "eamodio.gitlens"
+vscode "esbenp.prettier-vscode"
+vscode "github.copilot"
+vscode "github.copilot-chat"
+vscode "ms-vscode-remote.remote-ssh"
+vscode "ms-vscode-remote.remote-ssh-edit"
+vscode "ms-vscode.remote-explorer"
+vscode "mvllow.rose-pine"
+vscode "rooveterinaryinc.roo-cline"
