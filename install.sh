@@ -8,6 +8,13 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Parse command line arguments
+DRY_RUN=false
+if [[ "$1" == "--dry-run" || "$1" == "-n" ]]; then
+    DRY_RUN=true
+    echo -e "${YELLOW}DRY RUN MODE - No changes will be made${NC}"
+fi
+
 # Get the directory where this script is located
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FILES_DIR="$DOTFILES_DIR/files"
@@ -24,8 +31,10 @@ echo -e "${BLUE}Target directory: $HOME${NC}"
 echo -e "${BLUE}Backup directory: $BACKUP_DIR${NC}"
 echo
 
-# Create the centralized backup directory
-mkdir -p "$BACKUP_DIR" || { echo -e "${RED}Error: Could not create backup directory $BACKUP_DIR${NC}"; exit 1; }
+# Create the centralized backup directory (skip in dry-run)
+if [[ "$DRY_RUN" != "true" ]]; then
+    mkdir -p "$BACKUP_DIR" || { echo -e "${RED}Error: Could not create backup directory $BACKUP_DIR${NC}"; exit 1; }
+fi
 
 # Function to create a symlink and handle backups
 create_symlink() {
@@ -34,6 +43,21 @@ create_symlink() {
     local backup_relative_path="$3" # Path relative to HOME for backup within BACKUP_DIR
 
     echo -e "${BLUE}Processing: ${NC}$source_path ${BLUE}-> ${NC}$dest_path"
+
+    # Validate source exists
+    if [[ ! -e "$source_path" ]]; then
+        echo -e "${RED}Error: Source file does not exist: $source_path${NC}"
+        exit 1
+    fi
+
+    # In dry-run mode, just show what would happen
+    if [[ "$DRY_RUN" == "true" ]]; then
+        if [[ -e "$dest_path" || -L "$dest_path" ]]; then
+            echo -e "${YELLOW}  Would backup: $dest_path${NC}"
+        fi
+        echo -e "${GREEN}  Would create symlink: ${NC}$source_path ${GREEN}-> ${NC}$dest_path"
+        return
+    fi
 
     # Check if the destination exists (file, directory, or symlink)
     if [[ -e "$dest_path" || -L "$dest_path" ]]; then

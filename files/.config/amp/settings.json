@@ -1,0 +1,7 @@
+{
+  "amp.commands.allowlist": [
+    "uv",
+    "cp",
+    "rm"
+  ]
+}
