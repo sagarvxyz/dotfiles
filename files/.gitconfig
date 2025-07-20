@@ -45,3 +45,8 @@
 	email = sagar.velagala@gmail.com
 [credential]
         helper = osxkeychain
+[alias]
+        co = checkout
+        count   = !git shortlog -sn
+        branch-prune = !git remote prune origin && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -r git branch -D
+        undo = git reset --soft HEAD^
