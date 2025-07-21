@@ -2,6 +2,9 @@
   "amp.commands.allowlist": [
     "uv",
     "cp",
-    "rm"
-  ]
+    "rm",
+    "git",
+    "mise"
+  ],
+  "amp.cacheDirectory": "/Users/sagarv/.cache/amp"
 }
