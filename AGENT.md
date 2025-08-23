@@ -5,8 +5,9 @@ This file provides coding assistance guidance for this dotfiles repository.
 ## Commands
 
 ### Dotfiles Management
-- Install: `./install.sh` (creates symlinks from files/ to home directory)
+- Install: `./install.sh` (uses GNU Stow to create symlinks from repo root)
 - Uninstall: `./uninstall.sh` (removes symlinks, restores backups)
+- Manual: `cd .. && stow dotfiles` (create) / `stow -D dotfiles` (remove)
 - Package Management: `brew bundle` (install from Brewfile), `brew bundle dump --force` (update Brewfile)
 
 ### Testing/Validation
@@ -15,10 +16,10 @@ This file provides coding assistance guidance for this dotfiles repository.
 
 ## Architecture
 
-**Structure**: Dotfiles repo with symlink-based installation
-- `files/`: All dotfiles that get symlinked to home directory
-- `files/.config/`: Contains Neovim config with modular Lua setup
-- `install.sh`: Creates individual file symlinks (preserves directory structure)
+**Structure**: Dotfiles repo with GNU Stow-based installation
+- Dotfiles stored directly in repo root (no nested directories)
+- `.config/`: Contains Neovim config with modular Lua setup  
+- `install.sh`: Uses GNU Stow for symlink management
 - `Brewfile`: Package management via Homebrew
 - Backup system: Creates timestamped backup directory before symlinking
 

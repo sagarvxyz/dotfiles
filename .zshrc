@@ -48,9 +48,11 @@ alias gac='git add -A && git commit -m'
 alias gz='git undo'
 alias gbp="git branch-prune"
 alias reload="source ~/.zshrc"
-
-#amp code init
 alias amp="npx @sourcegraph/amp"
+# Enable vim bindings in zsh
+bindkey -v
+# Fix backspace in insert mode
+bindkey "^?" backward-delete-char
 
 # initialize autocomplete here, otherwise functions won't be loaded
 autoload -U compinit
@@ -68,3 +70,6 @@ if test -f $completion
 then
   source $completion
 fi
+
+# mise-en-place
+eval "$(mise activate zsh)"

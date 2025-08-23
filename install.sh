@@ -6,108 +6,79 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Parse command line arguments
-DRY_RUN=false
-if [[ "$1" == "--dry-run" || "$1" == "-n" ]]; then
-    DRY_RUN=true
-    echo -e "${YELLOW}DRY RUN MODE - No changes will be made${NC}"
+echo -e "${BLUE}Installing dotfiles using GNU Stow...${NC}"
+
+# Check if stow is installed
+if ! command -v stow &> /dev/null; then
+    echo -e "${RED}Error: GNU Stow is not installed${NC}"
+    echo -e "${YELLOW}Install it with: brew install stow${NC}"
+    exit 1
 fi
 
 # Get the directory where this script is located
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-FILES_DIR="$DOTFILES_DIR/files"
-BACKUP_DIR="$HOME/.dotfiles_backup_$(date +%Y%m%d%H%M%S)" # Centralized, timestamped backup folder
 
-# Check if files directory exists
-if [[ ! -d "$FILES_DIR" ]]; then
-    echo -e "${RED}Error: files/ directory not found in $DOTFILES_DIR${NC}"
-    exit 1
-fi
+# Create backup directory if files would be overwritten
+BACKUP_DIR="$HOME/.dotfiles_backup_$(date +%Y%m%d%H%M%S)"
 
-echo -e "${BLUE}Installing dotfiles from $FILES_DIR${NC}"
-echo -e "${BLUE}Target directory: $HOME${NC}"
-echo -e "${BLUE}Backup directory: $BACKUP_DIR${NC}"
-echo
+# Check for conflicts and backup existing files
+echo -e "${BLUE}Checking for conflicts...${NC}"
+CONFLICTS=false
 
-# Create the centralized backup directory (skip in dry-run)
-if [[ "$DRY_RUN" != "true" ]]; then
-    mkdir -p "$BACKUP_DIR" || { echo -e "${RED}Error: Could not create backup directory $BACKUP_DIR${NC}"; exit 1; }
-fi
+# List of dotfiles to stow (exclude git, scripts, and other repo files)
+DOTFILES=(.bashrc .gitconfig .gitignore_global .zprofile .zshrc Brewfile)
 
-# Function to create a symlink and handle backups
-create_symlink() {
-    local source_path="$1"
-    local dest_path="$2"
-    local backup_relative_path="$3" # Path relative to HOME for backup within BACKUP_DIR
+# List of .config subdirectories to individually symlink
+CONFIG_DIRS=(nvim ghostty zed)
 
-    echo -e "${BLUE}Processing: ${NC}$source_path ${BLUE}-> ${NC}$dest_path"
-
-    # Validate source exists
-    if [[ ! -e "$source_path" ]]; then
-        echo -e "${RED}Error: Source file does not exist: $source_path${NC}"
-        exit 1
-    fi
-
-    # In dry-run mode, just show what would happen
-    if [[ "$DRY_RUN" == "true" ]]; then
-        if [[ -e "$dest_path" || -L "$dest_path" ]]; then
-            echo -e "${YELLOW}  Would backup: $dest_path${NC}"
-        fi
-        echo -e "${GREEN}  Would create symlink: ${NC}$source_path ${GREEN}-> ${NC}$dest_path"
-        return
-    fi
-
-    # Check if the destination exists (file, directory, or symlink)
-    if [[ -e "$dest_path" || -L "$dest_path" ]]; then
-        echo -e "${YELLOW}  Existing item found at $dest_path. Backing up...${NC}"
-        
-        # Ensure parent directories exist in the backup location
-        mkdir -p "$(dirname "$BACKUP_DIR/$backup_relative_path")" || { echo -e "${RED}Error: Could not create backup parent directory for $backup_relative_path${NC}"; exit 1; }
-
-        # Move the existing item to the backup directory
-        mv "$dest_path" "$BACKUP_DIR/$backup_relative_path" || { echo -e "${RED}Error: Could not move $dest_path to backup${NC}"; exit 1; }
-        echo -e "${GREEN}  Backed up to: ${NC}$BACKUP_DIR/$backup_relative_path"
-    fi
-
-    # Ensure parent directories exist for the symlink destination
-    mkdir -p "$(dirname "$dest_path")" || { echo -e "${RED}Error: Could not create destination parent directory for $dest_path${NC}"; exit 1; }
-
-    # Create the symbolic link
-    ln -sf "$source_path" "$dest_path" || { echo -e "${RED}Error: Could not create symlink from $source_path to $dest_path${NC}"; exit 1; }
-    echo -e "${GREEN}  Symlinked: ${NC}$source_path ${GREEN}-> ${NC}$dest_path"
-}
-
-# --- Handle .config directory ---
-echo -e "\n${BLUE}--- Processing .config directory ---${NC}"
-CONFIG_SOURCE_DIR="$FILES_DIR/.config"
-CONFIG_DEST_DIR="$HOME/.config"
-
-if [[ -d "$CONFIG_SOURCE_DIR" ]]; then
-    mkdir -p "$CONFIG_DEST_DIR" # Ensure .config in HOME exists
-    find "$CONFIG_SOURCE_DIR" -mindepth 1 -maxdepth 1 | while read -r item; do
-        item_name="$(basename "$item")"
-        source_path="$item"
-        destination_path="$CONFIG_DEST_DIR/$item_name"
-        backup_relative_path=".config/$item_name" # Backup will be .dotfiles_backup/.config/item_name
-        create_symlink "$source_path" "$destination_path" "$backup_relative_path"
-    done
-else
-    echo -e "${YELLOW}No .config directory found in $FILES_DIR. Skipping.${NC}"
-fi
-
-# --- Handle other files and folders in the main 'files' directory ---
-echo -e "\n${BLUE}--- Processing other files and folders in $FILES_DIR ---${NC}"
-find "$FILES_DIR" -mindepth 1 -maxdepth 1 ! -name ".config" | while read -r item; do
-    item_name="$(basename "$item")"
+for dotfile in "${DOTFILES[@]}"; do
+    target_path="$HOME/$dotfile"
     
-    source_path="$item"
-    destination_path="$HOME/$item_name"
-    backup_relative_path="$item_name" # Backup will be .dotfiles_backup/item_name
-    create_symlink "$source_path" "$destination_path" "$backup_relative_path"
+    if [[ -e "$target_path" && ! -L "$target_path" ]]; then
+        if [[ "$CONFLICTS" == "false" ]]; then
+            mkdir -p "$BACKUP_DIR"
+            echo -e "${YELLOW}Backing up existing files to $BACKUP_DIR${NC}"
+            CONFLICTS=true
+        fi
+        
+        # Create backup directory structure  
+        mkdir -p "$(dirname "$BACKUP_DIR/$dotfile")"
+        cp -R "$target_path" "$BACKUP_DIR/$dotfile"
+        echo -e "${YELLOW}  Backed up: $target_path${NC}"
+        rm -rf "$target_path"
+    fi
 done
 
-echo -e "\n${GREEN}Dotfiles installation complete!${NC}"
-echo -e "${GREEN}All original files, if they existed, are backed up in: ${NC}$BACKUP_DIR"
-echo -e "${BLUE}You can manually review or delete this backup folder if everything works as expected.${NC}"
+# Handle .config directory specially - create individual symlinks
+mkdir -p "$HOME/.config"
+for config_dir in "${CONFIG_DIRS[@]}"; do
+    target_path="$HOME/.config/$config_dir"
+    source_path="$DOTFILES_DIR/.config/$config_dir"
+    
+    if [[ -e "$target_path" && ! -L "$target_path" ]]; then
+        if [[ "$CONFLICTS" == "false" ]]; then
+            mkdir -p "$BACKUP_DIR"
+            echo -e "${YELLOW}Backing up existing files to $BACKUP_DIR${NC}"
+            CONFLICTS=true
+        fi
+        
+        mkdir -p "$BACKUP_DIR/.config"
+        cp -R "$target_path" "$BACKUP_DIR/.config/$config_dir"
+        echo -e "${YELLOW}  Backed up: $target_path${NC}"
+        rm -rf "$target_path"
+    fi
+    
+    ln -s "$source_path" "$target_path"
+    echo -e "${GREEN}  Linked: ~/.config/$config_dir -> $source_path${NC}"
+done
+
+# Use stow to create symlinks for non-.config files
+cd "$(dirname "$DOTFILES_DIR")"
+stow "$(basename "$DOTFILES_DIR")" --ignore='\.git' --ignore='\.DS_Store' --ignore='README\.md' --ignore='AGENT\.md' --ignore='install\.sh' --ignore='uninstall\.sh' --ignore='\.config'
+
+echo -e "${GREEN}Dotfiles installation complete!${NC}"
+if [[ "$CONFLICTS" == "true" ]]; then
+    echo -e "${BLUE}Original files backed up to: $BACKUP_DIR${NC}"
+fi

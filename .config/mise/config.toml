@@ -1,0 +1,11 @@
+[tools]
+java = "latest"
+node = "latest"
+"npm:@sourcegraph/amp" = "latest"
+
+[env]
+_.path=['{{config_root}}/node_modules/.bin']
+
+[settings]
+experimental = true
+idiomatic_version_file_enable_tools = ["python"]

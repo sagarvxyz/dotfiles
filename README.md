@@ -1,6 +1,6 @@
 # Dotfiles
 
-My personal dotfiles with optimized performance and safe symlinking.
+My personal dotfiles managed with GNU Stow for simple symlink management.
 
 ## Installation
 
@@ -9,31 +9,32 @@ To install these dotfiles:
 ```bash
 git clone https://github.com/sagarvxyz/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
+brew bundle  # Install dependencies including stow
 ./install.sh
 ```
 
-This creates symlinks from the `files/` directory to your home directory, backing up any existing files.
+This uses GNU Stow to create symlinks from the repo root to your home directory, backing up any existing files.
 
 ### Options
 
-- `./install.sh --dry-run` - Preview changes without making them
+- `./install.sh` - Install dotfiles with automatic backup
 - `./uninstall.sh` - Remove all symlinks and restore backups
-- `./restore.sh <file>` - Restore a specific file from backup
+- `cd .. && stow dotfiles` - Manual stow 
+- `cd .. && stow -D dotfiles` - Manual unstow
 
 ### Examples
 
 ```bash
-# Preview installation
-./install.sh --dry-run
-
 # Install dotfiles
 ./install.sh
 
-# Restore just .zshrc from backup
-./restore.sh .zshrc
+# Uninstall and restore backups
+./uninstall.sh
 
-# Restore nvim config from specific backup
-./restore.sh .config/nvim ~/.dotfiles_backup_20240120123456
+# Manual stow operations
+cd ~/.dotfiles/..
+stow dotfiles        # Create symlinks
+stow -D dotfiles     # Remove symlinks
 ```
 
 ## Included Configurations
