@@ -12,7 +12,6 @@ return {
 			"hrsh7th/cmp-path",
 			"saadparwaiz1/cmp_luasnip",
 			"L3MON4D3/LuaSnip",
-			"zbirenbaum/copilot-cmp",
 			"onsails/lspkind.nvim",
 		},
 		config = function()
@@ -63,7 +62,6 @@ return {
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp", keyword_length = 3 },
 					{ name = "luasnip", keyword_length = 3 },
-					{ name = "copilot", keyword_length = 5 },
 					{ name = "path", keyword_length = 3 },
 					{ name = "buffer", keyword_length = 3 },
 				}),
@@ -76,7 +74,6 @@ return {
 							local source_mapping = {
 								nvim_lsp = "[LSP]",
 								luasnip = "[Snippet]",
-								copilot = "[Copilot]",
 								path = "[Path]",
 								buffer = "[Buffer]",
 							}

@@ -11,19 +11,18 @@ return {
 		config = function()
 			require("mason-tool-installer").setup({
 				ensure_installed = {
-					-- Formatters
+					-- Formatters for web dev and data engineering
 					"stylua",
 					"ruff",
 					"prettierd",
-					"prettier",
-					"google-java-format",
-					-- LSP servers (keeping existing ones)
+					-- LSP servers focused on our use cases
 					"ts_ls",
 					"pyright",
 					"jsonls",
 					"yamlls",
-					"gopls",
-					"jdtls",
+					-- Debug adapters
+					"js-debug-adapter",
+					"debugpy",
 				},
 				auto_update = false,
 				run_on_start = true,
@@ -40,8 +39,6 @@ return {
 					"pyright",
 					"jsonls",
 					"yamlls",
-					"gopls",
-					"jdtls",
 				},
 			})
 		end,
@@ -91,160 +88,54 @@ return {
 				end,
 			})
 
-			-- LSP keybindings function
+			-- Essential LSP keybindings (Pragmatic Programmer approach)
 			local on_attach = function(client, bufnr)
 				local opts = { buffer = bufnr, silent = true }
 
-				-- Core 'g' prefixed actions
-				vim.keymap.set(
-					"n",
-					"grn",
-					vim.lsp.buf.rename,
-					vim.tbl_extend("force", opts, { desc = "LSP: [R]e[n]ame" })
-				)
-				vim.keymap.set(
-					"n",
-					"gra",
-					vim.lsp.buf.code_action,
-					vim.tbl_extend("force", opts, { desc = "LSP: Code [A]ction" })
-				)
-				vim.keymap.set(
-					"n",
-					"grr",
-					"<cmd>Telescope lsp_references<cr>",
-					vim.tbl_extend("force", opts, { desc = "LSP: [R]eferences" })
-				)
-				vim.keymap.set(
-					"n",
-					"gri",
-					"<cmd>Telescope lsp_implementations<cr>",
-					vim.tbl_extend("force", opts, { desc = "LSP: [I]mplementation" })
-				)
-				vim.keymap.set(
-					"n",
-					"grd",
-					"<cmd>Telescope lsp_definitions<cr>",
-					vim.tbl_extend("force", opts, { desc = "LSP: [D]efinition" })
-				)
-				vim.keymap.set(
-					"n",
-					"grD",
-					vim.lsp.buf.declaration,
-					vim.tbl_extend("force", opts, { desc = "LSP: [D]eclaration" })
-				)
-				vim.keymap.set(
-					"n",
-					"grt",
-					"<cmd>Telescope lsp_type_definitions<cr>",
-					vim.tbl_extend("force", opts, { desc = "LSP: [T]ype Definition" })
-				)
+				-- Core navigation (use native LSP, not Telescope for speed)
+				vim.keymap.set("n", "gd", vim.lsp.buf.definition, vim.tbl_extend("force", opts, { desc = "Go to definition" }))
+				vim.keymap.set("n", "gr", vim.lsp.buf.references, vim.tbl_extend("force", opts, { desc = "References" }))
+				vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("force", opts, { desc = "Hover documentation" }))
 
-				-- Manual popups
-				vim.keymap.set(
-					"n",
-					"K",
-					vim.lsp.buf.hover,
-					vim.tbl_extend("force", opts, { desc = "LSP: Hover Documentation" })
-				)
-				vim.keymap.set(
-					"n",
-					"gK",
-					vim.lsp.buf.signature_help,
-					vim.tbl_extend("force", opts, { desc = "LSP: Signature Documentation" })
-				)
+				-- Essential code actions
+				vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, vim.tbl_extend("force", opts, { desc = "Rename" }))
+				vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, vim.tbl_extend("force", opts, { desc = "Code action" }))
 
-				-- Code actions
-				vim.keymap.set(
-					"n",
-					"<leader>ca",
-					vim.lsp.buf.code_action,
-					vim.tbl_extend("force", opts, { desc = "[C]ode [A]ction" })
-				)
-				vim.keymap.set("n", "<leader>cf", function()
+				-- Format shortcut
+				vim.keymap.set("n", "<leader>F", function()
 					require("conform").format({ async = true, lsp_fallback = true })
-				end, vim.tbl_extend("force", opts, { desc = "[C]ode [F]ormat" }))
-				vim.keymap.set(
-					"n",
-					"<leader>cr",
-					vim.lsp.buf.rename,
-					vim.tbl_extend("force", opts, { desc = "[C]ode [R]ename" })
-				)
-				vim.keymap.set(
-					"n",
-					"<leader>cs",
-					"<cmd>Telescope lsp_document_symbols<cr>",
-					vim.tbl_extend("force", opts, { desc = "[C]ode [S]ymbols" })
-				)
-				vim.keymap.set(
-					"n",
-					"<leader>cS",
-					"<cmd>Telescope lsp_workspace_symbols<cr>",
-					vim.tbl_extend("force", opts, { desc = "[C]ode workspace [S]ymbols" })
-				)
-				vim.keymap.set(
-					"n",
-					"<leader>cI",
-					"<cmd>LspInfo<cr>",
-					vim.tbl_extend("force", opts, { desc = "[C]ode LSP [I]nfo" })
-				)
-
-				-- Inlay hints toggle
-				if vim.lsp.inlay_hint then
-					vim.keymap.set("n", "<leader>th", function()
-						vim.lsp.inlay_hint.enable(
-							not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }),
-							{ bufnr = bufnr }
-						)
-					end, vim.tbl_extend("force", opts, { desc = "[T]oggle inlay [H]ints" }))
-				end
+				end, vim.tbl_extend("force", opts, { desc = "Format" }))
 			end
 
-			-- Server configurations
+			-- Server configurations optimized for web dev and data engineering
 			local servers = {
+				-- TypeScript/React - optimized for better go-to-definition
 				ts_ls = {
 					settings = {
 						typescript = {
-							inlayHints = {
-								includeInlayParameterNameHints = "all",
-								includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-								includeInlayFunctionParameterTypeHints = true,
-								includeInlayVariableTypeHints = true,
-								includeInlayPropertyDeclarationTypeHints = true,
-								includeInlayFunctionLikeReturnTypeHints = true,
-								includeInlayEnumMemberValueHints = true,
+							preferences = {
+								includePackageJsonAutoImports = "on",
+								includeCompletionsForModuleExports = true,
+							},
+							suggest = {
+								includeCompletionsForImportStatements = true,
 							},
 						},
 						javascript = {
-							inlayHints = {
-								includeInlayParameterNameHints = "all",
-								includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-								includeInlayFunctionParameterTypeHints = true,
-								includeInlayVariableTypeHints = true,
-								includeInlayPropertyDeclarationTypeHints = true,
-								includeInlayFunctionLikeReturnTypeHints = true,
-								includeInlayEnumMemberValueHints = true,
+							preferences = {
+								includePackageJsonAutoImports = "on",
+								includeCompletionsForModuleExports = true,
+							},
+							suggest = {
+								includeCompletionsForImportStatements = true,
 							},
 						},
 					},
 				},
-				pyright = {},
-				jsonls = {},
-				yamlls = {},
-				gopls = {
-					settings = {
-						gopls = {
-							hints = {
-								assignVariableTypes = true,
-								compositeLiteralFields = true,
-								constantValues = true,
-								functionTypeParameters = true,
-								parameterNames = true,
-								rangeVariableTypes = true,
-							},
-						},
-					},
-				},
-				jdtls = {},
+				-- Data engineering essentials
+				pyright = {},  -- Python for data work
+				jsonls = {},   -- JSON configurations
+				yamlls = {},   -- YAML configurations
 			}
 
 			-- Set up highlight groups for better visual styling
