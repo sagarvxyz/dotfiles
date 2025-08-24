@@ -1,14 +1,10 @@
 export PROJECTS=~/code
 
-if [[ -a ~/.zshenv ]]; then
-	source ~/.zshenv
-fi
+# Source additional configuration files
+[ -f "$HOME/.zshenv" ] && . "$HOME/.zshenv"
+[ -f "$HOME/.localrc" ] && . "$HOME/.localrc"
 
-if [[ -a ~/.localrc ]]; then
-	source ~/.localrc
-fi
-
-# PATH configuration
+# PATH configuration  
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH="./bin:/usr/local/bin:/usr/local/sbin:$PATH"
 export PATH="$PATH:/Users/svelagala/.local/bin"
@@ -24,18 +20,10 @@ bindkey "^?" backward-delete-char
 # Aliases
 alias gbp="git branch-prune"
 alias reload="source ~/.zshrc"
-alias amp="npx @sourcegraph/amp"
 
 # autocomplete
 autoload -U compinit
-
-# Git completion
-completion='$(brew --prefix)/share/zsh/site-functions/_git'
-
-if test -f $completion
-then
-  source $completion
-fi
+compinit -C
 
 # Prompt
 autoload -Uz vcs_info

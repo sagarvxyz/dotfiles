@@ -22,7 +22,6 @@ cask "git-credential-manager"
 cask "monodraw"
 cask "orbstack"
 cask "steam"
-
 cask "visual-studio-code"
 vscode "mvllow.rose-pine"
 vscode "vscodevim.vim"

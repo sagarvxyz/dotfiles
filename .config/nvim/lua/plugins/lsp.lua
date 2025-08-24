@@ -15,6 +15,11 @@ return {
 					"stylua",
 					"ruff",
 					"prettierd",
+					-- LSP servers focused on our use cases
+					"ts_ls",
+					"pyright",
+					"jsonls",
+					"yamlls",
 					-- Debug adapters
 					"js-debug-adapter",
 					"debugpy",
@@ -29,14 +34,18 @@ return {
 		dependencies = { "mason.nvim" },
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = {},
-				automatic_installation = true,
+				ensure_installed = {
+					"ts_ls",
+					"pyright",
+					"jsonls",
+					"yamlls",
+				},
 			})
 		end,
 	},
 	{
 		"neovim/nvim-lspconfig",
-		dependencies = { "mason-lspconfig.nvim", "nvim-telescope/telescope.nvim", "saghen/blink.cmp" },
+		dependencies = { "mason-lspconfig.nvim", "nvim-telescope/telescope.nvim" },
 		config = function()
 			local lspconfig = require("lspconfig")
 
@@ -127,7 +136,6 @@ return {
 				pyright = {},  -- Python for data work
 				jsonls = {},   -- JSON configurations
 				yamlls = {},   -- YAML configurations
-				clangd = {},   -- C/C++ development
 			}
 
 			-- Set up highlight groups for better visual styling
@@ -151,8 +159,25 @@ return {
 				vim.cmd("doautocmd ColorScheme")
 			end)
 
-			-- Enhanced LSP capabilities with blink.cmp
-			local capabilities = require("blink.cmp").get_lsp_capabilities()
+			-- Enhanced LSP capabilities for better completion
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			capabilities.textDocument.completion.completionItem = {
+				documentationFormat = { "markdown", "plaintext" },
+				snippetSupport = true,
+				preselectSupport = true,
+				insertReplaceSupport = true,
+				labelDetailsSupport = true,
+				deprecatedSupport = true,
+				commitCharactersSupport = true,
+				tagSupport = { valueSet = { 1 } },
+				resolveSupport = {
+					properties = {
+						"documentation",
+						"detail",
+						"additionalTextEdits",
+					},
+				},
+			}
 
 			for server, config in pairs(servers) do
 				lspconfig[server].setup(vim.tbl_deep_extend("force", {
