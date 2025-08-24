@@ -5,85 +5,30 @@ return {
 		build = "make install_jsregexp",
 	},
 	{
-		"hrsh7th/nvim-cmp",
+		"saghen/blink.cmp",
 		dependencies = {
-			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-buffer",
-			"hrsh7th/cmp-path",
-			"saadparwaiz1/cmp_luasnip",
+			"rafamadriz/friendly-snippets",
 			"L3MON4D3/LuaSnip",
-			"onsails/lspkind.nvim",
 		},
-		config = function()
-			local cmp = require("cmp")
-			local luasnip = require("luasnip")
-			local lspkind = require("lspkind")
-
-			cmp.setup({
-				snippet = {
-					expand = function(args)
-						luasnip.lsp_expand(args.body)
-					end,
-				},
-				completion = {
-					completeopt = "menu,menuone,popup,noselect",
-					autocomplete = false,
-				},
-				experimental = {
-					ghost_text = true,
-				},
-				mapping = cmp.mapping.preset.insert({
-					["<C-Space>"] = cmp.mapping.complete(), -- Manual trigger
-					["<C-n>"] = cmp.mapping.select_next_item(),
-					["<C-p>"] = cmp.mapping.select_prev_item(),
-					["<C-y>"] = cmp.mapping(function(fallback)
-						if cmp.visible() then
-							cmp.confirm({ select = true })
-						else
-							fallback()
-						end
-					end, { "i", "s" }),
-					["<Tab>"] = cmp.mapping(function(fallback)
-						if luasnip.expand_or_jumpable() then
-							luasnip.expand_or_jump()
-						else
-							fallback()
-						end
-					end, { "i", "s" }),
-					["<S-Tab>"] = cmp.mapping(function(fallback)
-						if luasnip.jumpable(-1) then
-							luasnip.jump(-1)
-						else
-							fallback()
-						end
-					end, { "i", "s" }),
-					["<C-e>"] = cmp.mapping.abort(),
-				}),
-				sources = cmp.config.sources({
-					{ name = "nvim_lsp", keyword_length = 3 },
-					{ name = "luasnip", keyword_length = 3 },
-					{ name = "path", keyword_length = 3 },
-					{ name = "buffer", keyword_length = 3 },
-				}),
-				formatting = {
-					format = lspkind.cmp_format({
-						mode = "symbol_text",
-						maxwidth = 50,
-						ellipsis_char = "...",
-						before = function(entry, vim_item)
-							local source_mapping = {
-								nvim_lsp = "[LSP]",
-								luasnip = "[Snippet]",
-								path = "[Path]",
-								buffer = "[Buffer]",
-							}
-							vim_item.menu = source_mapping[entry.source.name] or "[Unknown]"
-							return vim_item
-						end,
-					}),
-				},
-			})
-		end,
+		version = "1.*",
+		opts = {
+			keymap = { preset = "default" },
+			appearance = {
+				nerd_font_variant = "mono",
+			},
+			completion = {
+				documentation = { auto_show = false },
+				trigger = { prefetch_on_insert = false },
+			},
+			sources = {
+				default = { "lsp", "path", "snippets", "buffer" },
+			},
+			snippets = {
+				preset = "luasnip",
+			},
+			fuzzy = { implementation = "prefer_rust_with_warning" },
+		},
+		opts_extend = { "sources.default" },
 	},
 }
 

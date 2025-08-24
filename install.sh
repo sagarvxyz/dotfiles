@@ -57,6 +57,12 @@ for config_dir in "${CONFIG_DIRS[@]}"; do
     target_path="$HOME/.config/$config_dir"
     source_path="$DOTFILES_DIR/.config/$config_dir"
     
+    # Check if symlink already exists and points to correct location
+    if [[ -L "$target_path" && "$(readlink "$target_path")" == "$source_path" ]]; then
+        echo -e "${GREEN}  Already linked: ~/.config/$config_dir -> $source_path${NC}"
+        continue
+    fi
+    
     if [[ -e "$target_path" && ! -L "$target_path" ]]; then
         if [[ "$CONFLICTS" == "false" ]]; then
             mkdir -p "$BACKUP_DIR"
@@ -68,6 +74,9 @@ for config_dir in "${CONFIG_DIRS[@]}"; do
         cp -R "$target_path" "$BACKUP_DIR/.config/$config_dir"
         echo -e "${YELLOW}  Backed up: $target_path${NC}"
         rm -rf "$target_path"
+    elif [[ -L "$target_path" ]]; then
+        # Remove existing symlink if it points to wrong location
+        rm "$target_path"
     fi
     
     ln -s "$source_path" "$target_path"

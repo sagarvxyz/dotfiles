@@ -1,12 +1,11 @@
-tap "fsouza/prettierd"
 tap "homebrew/bundle"
 brew "docker"
+brew "docker-compose"
 brew "fd"
 brew "gh"
 brew "git"
 brew "icu4c@77", link: true
 brew "jq"
-brew "lazygit"
 brew "libpq", link: true
 brew "mise"
 brew "tree-sitter"
@@ -23,3 +22,7 @@ cask "git-credential-manager"
 cask "monodraw"
 cask "orbstack"
 cask "steam"
+
+cask "visual-studio-code"
+vscode "mvllow.rose-pine"
+vscode "vscodevim.vim"

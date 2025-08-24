@@ -8,60 +8,26 @@ if [[ -a ~/.localrc ]]; then
 	source ~/.localrc
 fi
 
-# PATH configuration (loaded first)
+# PATH configuration
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH="./bin:/usr/local/bin:/usr/local/sbin:$PATH"
 export PATH="$PATH:/Users/svelagala/.local/bin"
 
-# NVM configuration (lazy-loaded for performance)
-export NVM_DIR="$HOME/.nvm"
-nvm() {
-    unset -f nvm node npm npx
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-    nvm "$@"
-}
-node() { 
-    unset -f nvm node npm npx
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    node "$@"
-}
-npm() { 
-    unset -f nvm node npm npx
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    npm "$@"
-}
-npx() { 
-    unset -f nvm node npm npx
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    npx "$@"
-}
+# mise-en-place
+eval "$(mise activate zsh)"
 
-# Aliases
-alias gl='git pull --prune'
-alias gc='git commit'
-alias gca='git commit -a'
-alias gco='git checkout'
-alias gb='git branch'
-alias gs='git status -sb'
-alias gac='git add -A && git commit -m'
-alias gz='git undo'
-alias gbp="git branch-prune"
-alias reload="source ~/.zshrc"
-alias amp="npx @sourcegraph/amp"
 # Enable vim bindings in zsh
 bindkey -v
 # Fix backspace in insert mode
 bindkey "^?" backward-delete-char
 
-# initialize autocomplete here, otherwise functions won't be loaded
+# Aliases
+alias gbp="git branch-prune"
+alias reload="source ~/.zshrc"
+alias amp="npx @sourcegraph/amp"
+
+# autocomplete
 autoload -U compinit
-# Only regenerate compdump if it's older than 24 hours for performance
-if [[ $HOME/.zcompdump(#qNmh+24) ]]; then
-    compinit -C  # Skip security check
-else
-    compinit
-fi
 
 # Git completion
 completion='$(brew --prefix)/share/zsh/site-functions/_git'
@@ -71,5 +37,14 @@ then
   source $completion
 fi
 
-# mise-en-place
-eval "$(mise activate zsh)"
+# Prompt
+autoload -Uz vcs_info
+precmd() {
+    vcs_info
+}
+
+zstyle ':vcs_info:git:*' formats '(@%r/%b)'
+zstyle ':vcs_info:*' enable git
+
+setopt PROMPT_SUBST
+PROMPT='%D{%y/%m/%d %H:%M:%S} ${vcs_info_msg_0_:-(%m)} %(4~|.../%3~|%~) %# '
