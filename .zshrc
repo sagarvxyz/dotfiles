@@ -47,4 +47,4 @@ zstyle ':vcs_info:git:*' formats '(@%r/%b)'
 zstyle ':vcs_info:*' enable git
 
 setopt PROMPT_SUBST
-PROMPT='%D{%y/%m/%d %H:%M:%S} ${vcs_info_msg_0_:-(%m)} %(4~|.../%3~|%~) %# '
+PROMPT='%D{%y/%m/%d %H:%M:%S} ${vcs_info_msg_0_:-(%m)} %(3~|../%2~|%~) %# '
