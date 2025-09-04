@@ -19,9 +19,34 @@ fi
 # Get the directory where this script is located
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Use stow to remove symlinks, treating repo root as the package
+# List of .config subdirectories to individually remove (matches install.sh)
+CONFIG_DIRS=(nvim ghostty mise amp zed)
+
+# List of individual .config files to remove (matches install.sh)
+CONFIG_FILES=(starship.toml)
+
+# Remove individual .config directory symlinks
+echo -e "${YELLOW}Removing individual .config symlinks...${NC}"
+for config_dir in "${CONFIG_DIRS[@]}"; do
+    target_path="$HOME/.config/$config_dir"
+    if [[ -L "$target_path" ]]; then
+        rm "$target_path"
+        echo -e "${GREEN}  Removed: ~/.config/$config_dir${NC}"
+    fi
+done
+
+# Remove individual .config file symlinks
+for config_file in "${CONFIG_FILES[@]}"; do
+    target_path="$HOME/.config/$config_file"
+    if [[ -L "$target_path" ]]; then
+        rm "$target_path"
+        echo -e "${GREEN}  Removed: ~/.config/$config_file${NC}"
+    fi
+done
+
+# Use stow to remove symlinks for non-.config files
 cd "$(dirname "$DOTFILES_DIR")"
-stow -D "$(basename "$DOTFILES_DIR")" --ignore='\.git' --ignore='\.DS_Store' --ignore='README\.md' --ignore='AGENT\.md' --ignore='Brewfile' --ignore='install\.sh' --ignore='uninstall\.sh'
+stow -D "$(basename "$DOTFILES_DIR")" --ignore='\.git' --ignore='\.DS_Store' --ignore='README\.md' --ignore='AGENT\.md' --ignore='install\.sh' --ignore='uninstall\.sh' --ignore='\.config'
 
 # Find and restore from most recent backup
 BACKUP_DIR_PATTERN="$HOME/.dotfiles_backup_*"

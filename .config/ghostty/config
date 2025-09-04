@@ -1,4 +1,4 @@
 theme = light:rose-pine-dawn,dark:rose-pine-moon
-font-family = Berkeley Mono 
-
-keybind = shift+enter=text:\n
+font-family = "Berkeley Mono"
+font-size = 14
+keybind = global:cmd+grave_accent=toggle_quick_terminal
