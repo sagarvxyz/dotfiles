@@ -8,6 +8,8 @@ $time\
 [❯ ]()\
 """
 
+add_newline = false
+
 [time]
 disabled = false
 format = "[$time]($style) "
@@ -29,6 +31,8 @@ disabled = false
 format = "[$branch(:$remote_branch)$symbol]($style)"
 symbol = "@"
 style = "bg:overlay"
+truncation_length = 100
+truncation_symbol = "..."
 
 [directory]
 format = '[$path]($style) '
@@ -36,4 +40,3 @@ style = ""
 truncate_to_repo = true
 truncation_length = 3
 truncation_symbol = ""
-
