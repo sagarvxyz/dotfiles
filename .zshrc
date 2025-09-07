@@ -12,6 +12,9 @@ export PATH="$PATH:/Users/svelagala/.local/bin"
 # mise-en-place
 eval "$(mise activate zsh)"
 
+# Set PATH for GUI applications on login
+launchctl setenv PATH "$PATH"
+
 # Enable vim bindings in zsh
 bindkey -v
 # Fix backspace in insert mode

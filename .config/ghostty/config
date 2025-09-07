@@ -1,6 +1,6 @@
 theme = light:rose-pine-dawn,dark:rose-pine-moon
 font-family = "BerkeleyMono Nerd Font Mono"
 font-family = "Berkeley Mono"
-font-size = 14
+font-size = 15
 keybind = global:cmd+grave_accent=toggle_quick_terminal
 quick-terminal-position = bottom

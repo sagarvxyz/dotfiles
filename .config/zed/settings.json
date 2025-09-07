@@ -1,7 +1,6 @@
 // documentation: https://zed.dev/docs/configuring-zed
 {
   // UI
-
   "ui_font_family": "Berkeley Mono",
   "theme": {
     "mode": "system",
