@@ -1,6 +1,7 @@
 // documentation: https://zed.dev/docs/configuring-zed
 {
   // UI
+
   "ui_font_family": "Berkeley Mono",
   "theme": {
     "mode": "system",
@@ -72,9 +73,10 @@
   "edit_predictions": {
     "mode": "subtle"
   },
-  "agent_servers": {
-    "amp": {
-      "command": "amp"
+  "agent": {
+    "default_model": {
+      "provider": "google",
+      "model": "gemini-2.5-pro"
     }
   }
 }

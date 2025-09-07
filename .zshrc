@@ -20,7 +20,7 @@ bindkey "^?" backward-delete-char
 # Aliases
 alias gbp="git branch-prune"
 alias reload="source ~/.zshrc"
-# alias amp="npx @sourcegraph/amp"
+alias amp="npx @sourcegraph/amp"
 
 # autocomplete
 autoload -U compinit
