@@ -1,81 +1,205 @@
 // documentation: https://zed.dev/docs/configuring-zed
 {
-  // UI
-  "ui_font_family": "Berkeley Mono",
+  // ═══════════════════════════════════════════════════════════════════════════
+  // THEME & APPEARANCE
+  // ═══════════════════════════════════════════════════════════════════════════
+  "ui_font_weight": 400.0,
   "theme": {
     "mode": "system",
     "light": "Rosé Pine Dawn",
-    "dark": "Rosé Pine Moon"
+    "dark": "Rosé Pine Moon",
+  },
+  "icon_theme": "Zed (Default)",
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // FONTS
+  // ═══════════════════════════════════════════════════════════════════════════
+  "ui_font_family": "IBM Plex Sans",
+  "ui_font_size": 15.0,
+  "buffer_font_family": "Berkeley Mono Variable",
+  "buffer_font_size": 15.0,
+  "buffer_font_weight": 375.0,
+  "buffer_font_features": {
+    "calt": false,
+  },
+  "buffer_line_height": "standard",
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // EDITOR BEHAVIOR
+  // ═══════════════════════════════════════════════════════════════════════════
+  "vim_mode": true,
+  "base_keymap": "VSCode",
+  "relative_line_numbers": "enabled",
+  "vertical_scroll_margin": 10.0,
+  "preferred_line_length": 100,
+  "format_on_save": "on",
+  "ensure_final_newline_on_save": true,
+  "remove_trailing_whitespace_on_save": true,
+  "use_auto_surround": true,
+  "use_autoclose": true,
+  "use_on_type_format": false,
+  "jsx_tag_auto_close": {
+    "enabled": true,
+  },
+  "inlay_hints": {
+    "enabled": true,
+  },
+  "unnecessary_code_fade": 0.3,
+  "indent_guides": {
+    "coloring": "indent_aware",
+    "background_coloring": "indent_aware",
+    "line_width": 1,
+    "enabled": false,
+  },
+  "gutter": {
+    "runnables": true,
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // LANGUAGE-SPECIFIC
+  // ═══════════════════════════════════════════════════════════════════════════
+  "languages": {
+    "Markdown": {
+      "show_wrap_guides": false,
+      "soft_wrap": "preferred_line_length",
+    },
+    "Python": {
+      "language_servers": ["ty", "!basedpyright", "..."],
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // UI CHROME (Title Bar, Tab Bar, Toolbar, Status Bar)
+  // ═══════════════════════════════════════════════════════════════════════════
+  "use_system_window_tabs": false,
+  "active_pane_modifiers": {
+    "border_size": 0.0,
+    "inactive_opacity": 0.7,
   },
   "title_bar": {
+    "show_menus": false,
+    "show_onboarding_banner": true,
+    "show_branch_name": true,
     "show_branch_icon": true,
     "show_project_items": true,
-    "show_user_picture": false
+    "show_user_picture": false,
   },
   "tab_bar": {
+    "show": true,
     "show_tab_bar_buttons": false,
-    "show_nav_history_buttons": false
+    "show_nav_history_buttons": false,
   },
   "tabs": {
-    "file_icons": true
+    "git_status": false,
+    "file_icons": false,
   },
   "toolbar": {
-    "quick_actions": false
+    "breadcrumbs": false,
+    "quick_actions": false,
   },
   "status_bar": {
-    "cursor_position_button": false,
-    "active_language_button": false
+    "cursor_position_button": true,
+    "active_language_button": false,
   },
-  "collaboration_panel": {
-    "button": false
+  "preview_tabs": {
+    "enable_preview_from_file_finder": false,
   },
-  "outline_panel": {
-    "button": false
+  "search": {
+    "button": false,
   },
+  "diagnostics": {
+    "button": true,
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PANELS & DOCKS
+  // ═══════════════════════════════════════════════════════════════════════════
+  "bottom_dock_layout": "contained",
   "project_panel": {
+    "button": true,
     "entry_spacing": "standard",
     "indent_guides": { "show": "never" },
     "indent_size": 12,
-    "hide_root": true
+    "hide_root": true,
   },
-  "terminal": {
-    "shell": "system",
-    "line_height": "standard",
-    "max_scroll_history_lines": 100000,
-    "button": true,
-    "dock": "bottom"
+  "outline_panel": {
+    "button": false,
+  },
+  "collaboration_panel": {
+    "button": false,
   },
   "notification_panel": {
-    "dock": "left"
+    "dock": "left",
   },
   "debugger": {
-    "dock": "left"
-  },
-  // EDITOR
-  "vim_mode": true,
-  "buffer_font_family": "Berkeley Mono",
-  "ui_font_size": 15,
-  "buffer_font_size": 15,
-  "buffer_line_height": "standard",
-  "vertical_scroll_margin": 8,
-  "relative_line_numbers": true,
-  "format_on_save": "off",
-  "indent_guides": {
-    "enabled": false
+    "dock": "left",
   },
 
-  // AI
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TERMINAL
+  // ═══════════════════════════════════════════════════════════════════════════
+  "terminal": {
+    "shell": "system",
+    "dock": "bottom",
+    "button": false,
+    "max_scroll_history_lines": 100000,
+    "font_family": "Berkeley Mono Variable",
+    "font_size": 15.0,
+    "font_weight": 375,
+    "font_features": {
+      "calt": false,
+    },
+    "line_height": "standard",
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // GIT
+  // ═══════════════════════════════════════════════════════════════════════════
+  "git": {
+    "blame": {
+      "show_avatar": false,
+    },
+    "inline_blame": {
+      "show_commit_summary": false,
+      "enabled": false,
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // COLLABORATION & CALLS
+  // ═══════════════════════════════════════════════════════════════════════════
+  "calls": {
+    "mute_on_join": true,
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // AI & AGENT
+  // ═══════════════════════════════════════════════════════════════════════════
   "disable_ai": false,
+  "agent_buffer_font_size": 14.0,
+  "agent_ui_font_size": 15.0,
   "features": {
-    "edit_prediction_provider": "none"
+    "edit_prediction_provider": "none",
   },
   "edit_predictions": {
-    "mode": "subtle"
+    "mode": "subtle",
   },
   "agent": {
+    "always_allow_tool_actions": true,
+    "default_profile": "write",
     "default_model": {
       "provider": "google",
-      "model": "gemini-2.5-pro"
-    }
-  }
+      "model": "gemini-3-pro-preview",
+    },
+  },
+  "agent_servers": {
+    "Amp Code": {
+      "type": "custom",
+      "command": "node",
+      "args": ["/Users/sagarv/code/amp-acp/dist/index.js"],
+      "env": {
+        "AMP_API_KEY": "sgamp_user_01JRY27JCDFE5T89R6410BBWKV_a2ac4c7a20f9c35cd4cce8399d0f1cb3b5a9cd932c306893b996ecb1bfa3c568",
+      },
+    },
+  },
 }

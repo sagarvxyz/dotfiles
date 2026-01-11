@@ -1,0 +1,8 @@
+\.git
+\.gitignore
+\.DS_Store
+README\.md
+AGENT\.md
+install\.sh
+uninstall\.sh
+\.vscode

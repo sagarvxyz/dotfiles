@@ -2,28 +2,22 @@ return {
 	"stevearc/conform.nvim",
 	event = { "BufWritePre" },
 	cmd = { "ConformInfo" },
-	keys = {
-		{
-			"<leader>f",
-			function()
-				require("conform").format({ async = true, lsp_fallback = true })
-			end,
-			mode = "",
-			desc = "[F]ormat buffer",
-		},
-	},
 	config = function()
-		require("conform").setup({
+		local conform = require("conform")
+
+		conform.setup({
 			formatters_by_ft = {
 				lua = { "stylua" },
-				python = { "ruff" },
-				javascript = { "prettierd" },
-				typescript = { "prettierd" },
-				javascriptreact = { "prettierd" },
-				typescriptreact = { "prettierd" },
-				json = { "prettierd" },
+				python = { "ruff_format" },
+				javascript = { "prettierd", "biome", stop_after_first = true },
+				typescript = { "prettierd", "biome", stop_after_first = true },
+				javascriptreact = { "prettierd", "biome", stop_after_first = true },
+				typescriptreact = { "prettierd", "biome", stop_after_first = true },
+				json = { "prettierd", "biome", stop_after_first = true },
 				yaml = { "prettierd" },
 				markdown = { "prettierd" },
+				html = { "prettierd" },
+				css = { "prettierd" },
 			},
 			default_format_opts = {
 				lsp_fallback = true,
@@ -32,6 +26,21 @@ return {
 				timeout_ms = 500,
 				lsp_fallback = true,
 			},
+			notify_on_error = true,
+			notify_no_formatters = true,
 		})
+
+		vim.api.nvim_create_user_command("FormatInfo", function()
+			local bufnr = vim.api.nvim_get_current_buf()
+			local formatters = conform.list_formatters(bufnr)
+			if #formatters == 0 then
+				vim.notify("No formatters available for this buffer", vim.log.levels.INFO)
+			else
+				local names = vim.tbl_map(function(f)
+					return f.name .. (f.available and "" or " (unavailable)")
+				end, formatters)
+				vim.notify("Formatters: " .. table.concat(names, ", "), vim.log.levels.INFO)
+			end
+		end, { desc = "Show available formatters" })
 	end,
 }

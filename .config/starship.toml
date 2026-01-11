@@ -1,14 +1,18 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = """\
-$hostname\
+$time\
+${custom.connection}\
 $git_branch\
 $directory\
-$time\
-[❯ ]()\
+$character\
 """
 
 add_newline = false
+
+[character]
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
 
 [time]
 disabled = false
@@ -17,13 +21,11 @@ style = ""
 time_format = "%I:%M:%S"
 use_12hr = false
 
-[hostname]
-disabled = false
-ssh_only = true
-format = "[$ssh_symbol $hostname]($style) "
-ssh_symbol = "ssh:"
-style = "bg:overlay"
-trim_at = "."
+[custom.connection]
+command = 'if [ -n "$SSH_CONNECTION" ]; then echo "ssh:$(hostname -s)"; else echo "local"; fi'
+when = true
+format = "[$output]($style) "
+style = ""
 
 
 [git_branch]

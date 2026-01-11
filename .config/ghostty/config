@@ -1,6 +1,10 @@
-theme = light:rose-pine-dawn,dark:rose-pine-moon
-font-family = "BerkeleyMono Nerd Font Mono"
-font-family = "Berkeley Mono"
+theme = light:Rose Pine Dawn,dark:Rose Pine Moon
+font-family = "Berkeley Mono Variable"
 font-size = 15
-keybind = global:cmd+grave_accent=toggle_quick_terminal
+font-variation = wght=375
+font-feature = -calt
+adjust-cell-height = +20%
+
 quick-terminal-position = bottom
+
+keybind = global:cmd+grave_accent=toggle_quick_terminal
