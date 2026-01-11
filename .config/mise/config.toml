@@ -2,5 +2,10 @@
 idiomatic_version_file_enable_tools = []
 experimental = true
 
+# Global tools - add language runtimes here as needed
+# Project-specific versions should go in project .mise.toml files
 [tools]
 node = "lts"
+# python = "latest"
+# go = "latest"
+# ruby = "latest"

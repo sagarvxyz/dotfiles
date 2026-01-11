@@ -197,9 +197,6 @@
       "type": "custom",
       "command": "node",
       "args": ["/Users/sagarv/code/amp-acp/dist/index.js"],
-      "env": {
-        "AMP_API_KEY": "sgamp_user_01JRY27JCDFE5T89R6410BBWKV_a2ac4c7a20f9c35cd4cce8399d0f1cb3b5a9cd932c306893b996ecb1bfa3c568",
-      },
     },
   },
 }

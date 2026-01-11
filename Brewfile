@@ -1,26 +1,36 @@
+# Taps
 tap "fsouza/prettierd"
 tap "homebrew/bundle"
-brew "docker"
-brew "docker-compose"
+
+# Core CLI tools
 brew "fd"
 brew "gh"
 brew "git"
-brew "icu4c@77", link: true
 brew "jq"
-brew "libpq", link: true
-brew "mise"
-brew "tree-sitter"
-brew "neovim"
-brew "reattach-to-user-namespace"
 brew "ripgrep"
-brew "starship"
 brew "stow"
-brew "tmux"
 brew "tree"
+
+# Shell & terminal
+brew "starship"
+brew "tmux"
+brew "reattach-to-user-namespace"
+
+# Editor
+brew "neovim"
+brew "tree-sitter"
+
+# Runtime/version manager (manages node, python, go, etc.)
+brew "mise"
+
+# System libraries (dependencies for other tools)
+brew "icu4c@77", link: true
+brew "libpq", link: true
+
+# GUI Apps
 cask "1password"
 cask "ghostty", args: { appdir: "/Applications" }
 cask "git-credential-manager"
-cask "monodraw"
-cask "orbstack"
+cask "orbstack"  # Provides docker & docker-compose
 cask "steam"
 cask "zed"
