@@ -12,7 +12,6 @@ return {
 			require("mason-lspconfig").setup({
 				ensure_installed = {
 					"ts_ls",
-					"pyright",
 					"jsonls",
 					"yamlls",
 					"lua_ls",
@@ -93,7 +92,7 @@ return {
 						},
 					},
 				},
-				pyright = {},
+				ty = {},
 				jsonls = {},
 				yamlls = {},
 				sqlls = {},
@@ -135,7 +134,7 @@ return {
 
 			local server_cmds = {
 				ts_ls = { "typescript-language-server", "--stdio" },
-				pyright = { "pyright-langserver", "--stdio" },
+				ty = { "ty", "server" },
 				jsonls = { "vscode-json-language-server", "--stdio" },
 				yamlls = { "yaml-language-server", "--stdio" },
 				sqlls = { "sql-language-server", "up", "--method", "stdio" },

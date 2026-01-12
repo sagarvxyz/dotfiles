@@ -21,11 +21,9 @@ vim.keymap.set("n", "<leader>o", "<cmd>only<CR>", { desc = "Only this window", r
 vim.keymap.set("n", "]q", "<cmd>cnext<CR>", { desc = "Next quickfix", remap = false })
 vim.keymap.set("n", "[q", "<cmd>cprev<CR>", { desc = "Previous quickfix", remap = false })
 
--- Center on jump
-vim.keymap.set("n", "n", "nzz", { desc = "Next search result (centered)", remap = false })
-vim.keymap.set("n", "N", "Nzz", { desc = "Previous search result (centered)", remap = false })
-vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Scroll down (centered)", remap = false })
-vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Scroll up (centered)", remap = false })
+-- Center on jump (remap = true to use neoscroll's smooth zz)
+vim.keymap.set("n", "n", "nzz", { desc = "Next search result (centered)", remap = true })
+vim.keymap.set("n", "N", "Nzz", { desc = "Previous search result (centered)", remap = true })
 
 -- Delete to black hole register (don't overwrite clipboard)
 vim.keymap.set({ "n", "v" }, "d", '"_d', { desc = "Delete (black hole)", remap = false })

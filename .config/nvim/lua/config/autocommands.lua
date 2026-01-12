@@ -61,38 +61,24 @@ autocmd("FileType", {
 	end,
 })
 
--- Binary file handling
-autocmd("BufReadPost", {
-	desc = "Binary file handling",
+-- Binary file handling - warn before opening
+autocmd("BufReadCmd", {
+	desc = "Warn before opening binary files",
 	group = augroup("binary-file", { clear = true }),
+	pattern = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp", "*.ico", "*.pdf", "*.zip", "*.tar", "*.gz", "*.exe", "*.dll", "*.so", "*.dylib", "*.docx", "*.xlsx", "*.pptx" },
 	callback = function(args)
 		local name = vim.api.nvim_buf_get_name(args.buf)
-		local binary_extensions = { "%.png$", "%.jpg$", "%.jpeg$", "%.gif$", "%.bmp$", "%.ico$", "%.pdf$", "%.zip$", "%.tar$", "%.gz$", "%.exe$", "%.dll$", "%.so$", "%.dylib$" }
-		for _, ext in ipairs(binary_extensions) do
-			if name:match(ext) then
-				vim.bo[args.buf].modifiable = false
-				vim.bo[args.buf].readonly = true
-				vim.api.nvim_buf_set_lines(args.buf, 0, -1, false, { "[Binary file]" })
-				return
-			end
+		local choice = vim.fn.confirm("'" .. vim.fn.fnamemodify(name, ":t") .. "' is a binary file. Open anyway?", "&Yes\n&No", 2)
+		if choice == 1 then
+			vim.cmd("doautocmd BufReadPre")
+			vim.cmd("read " .. vim.fn.fnameescape(name))
+			vim.cmd("1delete_")
+			vim.bo[args.buf].modifiable = false
+			vim.bo[args.buf].readonly = true
+		else
+			vim.api.nvim_buf_delete(args.buf, { force = true })
 		end
 	end,
 })
 
--- Auto-close unused buffers (aggressive buffer cleanup)
-autocmd("BufHidden", {
-	desc = "Auto-close unused buffers",
-	group = augroup("buffer-cleanup", { clear = true }),
-	callback = function(args)
-		if vim.bo[args.buf].buftype == "" and not vim.bo[args.buf].modified then
-			vim.schedule(function()
-				if vim.api.nvim_buf_is_valid(args.buf) and not vim.bo[args.buf].modified then
-					local wins = vim.fn.win_findbuf(args.buf)
-					if #wins == 0 then
-						pcall(vim.api.nvim_buf_delete, args.buf, { force = false })
-					end
-				end
-			end)
-		end
-	end,
-})
+

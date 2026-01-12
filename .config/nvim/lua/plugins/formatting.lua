@@ -8,11 +8,11 @@ return {
 		conform.setup({
 			formatters_by_ft = {
 				lua = { "stylua" },
-				python = { "ruff_format" },
-				javascript = { "prettierd", "biome", stop_after_first = true },
-				typescript = { "prettierd", "biome", stop_after_first = true },
-				javascriptreact = { "prettierd", "biome", stop_after_first = true },
-				typescriptreact = { "prettierd", "biome", stop_after_first = true },
+				python = { "ruff_fix", "ruff_format" },
+				javascript = { "eslint_d", "prettierd", "biome", stop_after_first = true },
+				typescript = { "eslint_d", "prettierd", "biome", stop_after_first = true },
+				javascriptreact = { "eslint_d", "prettierd", "biome", stop_after_first = true },
+				typescriptreact = { "eslint_d", "prettierd", "biome", stop_after_first = true },
 				json = { "prettierd", "biome", stop_after_first = true },
 				yaml = { "prettierd" },
 				markdown = { "prettierd" },

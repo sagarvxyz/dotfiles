@@ -11,6 +11,12 @@ vim.opt.shiftwidth = 4
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.signcolumn = "yes"
+vim.o.statuscolumn = "%s%=%{v:relnum?v:relnum:v:lnum} "
+vim.o.cursorline = true
+vim.o.cursorlineopt = "number"
+vim.o.cmdheight = 0
+
+vim.api.nvim_set_hl(0, "CursorLineNr", { bold = true })
 
 vim.o.undofile = true
 
@@ -23,6 +29,8 @@ vim.opt.splitright = true
 vim.o.inccommand = "split"
 
 vim.o.scrolloff = 10
+
+vim.opt.fillchars = { eob = " " }
 
 vim.o.confirm = true
 

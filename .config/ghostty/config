@@ -1,9 +1,13 @@
 theme = light:Rose Pine Dawn,dark:Rose Pine Moon
 font-family = "Berkeley Mono Variable"
 font-size = 15
-font-variation = wght=375
+font-variation = wdth=90
+font-variation = wght=400
 font-feature = -calt
-adjust-cell-height = +20%
+font-feature = +ss01
+window-padding-y = 0
+window-padding-x = 0
+window-padding-balance = true
 
 quick-terminal-position = bottom
 
