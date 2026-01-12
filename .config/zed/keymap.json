@@ -1,25 +1,5 @@
 [
   // ═══════════════════════════════════════════════════════════════════════════
-  // BLACK HOLE REGISTER: d/x/c don't overwrite clipboard
-  // ═══════════════════════════════════════════════════════════════════════════
-  {
-    "context": "Editor && vim_mode == normal && !menu",
-    "bindings": {
-      "d": ["vim::PushOperator", { "Delete": { "register": "_" } }],
-      "c": ["vim::PushOperator", { "Change": { "register": "_" } }],
-      "x": ["vim::Delete", { "register": "_" }]
-    }
-  },
-  {
-    "context": "Editor && vim_mode == visual && !menu",
-    "bindings": {
-      "d": ["vim::Delete", { "register": "_" }],
-      "c": ["vim::Change", { "register": "_" }],
-      "x": ["vim::Delete", { "register": "_" }]
-    }
-  },
-
-  // ═══════════════════════════════════════════════════════════════════════════
   // LEADER BINDINGS (space)
   // ═══════════════════════════════════════════════════════════════════════════
   {
@@ -38,7 +18,7 @@
       // Diagnostics
       "space d": "diagnostics::Deploy",
       "] d": "editor::GoToDiagnostic",
-      "[ d": "editor::GoToPrevDiagnostic",
+      "[ d": "editor::GoToPreviousDiagnostic",
 
       // Search/Navigation
       "space f f": "file_finder::Toggle",

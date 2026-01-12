@@ -46,7 +46,6 @@
   },
   "show_completions_on_input": false,
   "soft_wrap": "editor_width",
-  "center_on_match": true,
   "unnecessary_code_fade": 0.3,
   "indent_guides": {
     "coloring": "indent_aware",
@@ -193,13 +192,6 @@
     "default_model": {
       "provider": "google",
       "model": "gemini-3-pro-preview",
-    },
-  },
-  "agent_servers": {
-    "Amp Code": {
-      "type": "custom",
-      "command": "node",
-      "args": ["/Users/sagarv/code/amp-acp/dist/index.js"],
     },
   },
 }
