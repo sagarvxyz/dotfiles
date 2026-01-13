@@ -1,5 +1,4 @@
 # Taps
-tap "fsouza/prettierd"
 tap "homebrew/bundle"
 
 # Core CLI tools
@@ -29,6 +28,7 @@ brew "libpq", link: true
 
 # GUI Apps
 cask "1password"
+brew "1password-cli"
 cask "ghostty", args: { appdir: "/Applications" }
 cask "git-credential-manager"
 cask "orbstack"  # Provides docker & docker-compose

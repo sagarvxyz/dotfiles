@@ -35,3 +35,6 @@ temp/
 # Local environment files
 .env.local
 .localrc.local
+
+# Zed prompts (user-specific)
+.config/zed/prompts/

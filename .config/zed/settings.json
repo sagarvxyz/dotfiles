@@ -14,11 +14,10 @@
   // ═══════════════════════════════════════════════════════════════════════════
   // FONTS
   // ═══════════════════════════════════════════════════════════════════════════
-  "ui_font_family": "IBM Plex Sans",
+  "ui_font_family": "Berkeley Mono",
   "ui_font_size": 15.0,
   "buffer_font_family": "Berkeley Mono Variable",
   "buffer_font_size": 15.0,
-  "buffer_font_weight": 375.0,
   "buffer_font_features": {
     "calt": false,
   },
